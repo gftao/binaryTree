@@ -92,8 +92,6 @@ func (n *Node) Delete(key int, p *Node) error {
 			return nil
 		}
 		replacement, replParent := n.Left.findMax(n)
-		fmt.Println(replacement.Key)
-		fmt.Println(replParent.Key)
 		n.Key = replacement.Key
 		return replacement.Delete(replacement.Key, replParent)
 	}
