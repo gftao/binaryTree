@@ -11,7 +11,7 @@ var tests = []struct {
 	{3, true},
 }
 
-func TestSearch(t *testing.T) {
+func TestNode_Search(t *testing.T) {
 	tree := &Node{Key: 6, Left: &Node{Key: 3}}
 
 	for i, test := range tests {
@@ -21,7 +21,14 @@ func TestSearch(t *testing.T) {
 	}
 }
 
-func TestDelete(t *testing.T) {
-	tree := &Node{Key: 6, Left: &Node{Key: 3}}
-	tree.Delete(3, nil)
+func TestNode_Delete(t *testing.T) {
+	tree := &Node{Key: 6}
+
+	tree.Insert(15)
+	tree.Insert(13)
+	tree.Insert(14)
+	tree.Delete(6, nil)
+	if tree.String() != "13 14 15" {
+		t.Errorf("got [%s], expected [%v]", tree.String(), "13 14 15")
+	}
 }

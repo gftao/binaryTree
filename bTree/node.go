@@ -3,6 +3,7 @@ package bTree
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type Node struct {
@@ -51,19 +52,28 @@ func (n *Node) Max() int {
 	return n.Right.Max()
 }
 func (n *Node) findMax(parent *Node) (*Node, *Node) {
-	if n == nil {
-		return nil, parent
+	if parent == nil {
+		return n, nil
 	}
 	if n.Right == nil {
 		return n, parent
 	}
 	return n.Right.findMax(n)
 }
-func (n *Node) replaceNode(parent, replacement *Node) {
-	if parent == nil && replacement == nil {
-		n = nil
-		return
+func (n *Node) findMin(parent *Node) (*Node, *Node) {
+	if parent == nil {
+		return n, nil
 	}
+	if n.Left == nil {
+		return n, parent
+	}
+	return n.Left.findMin(n)
+}
+func (n *Node) replaceNode(parent, replacement *Node) {
+	//头结点
+	//if parent == nil && replacement == nil {
+	//	return
+	//}
 	if n == parent.Left {
 		parent.Left = replacement
 	} else {
@@ -73,33 +83,52 @@ func (n *Node) replaceNode(parent, replacement *Node) {
 
 func (n *Node) Delete(key int, p *Node) error {
 	if n == nil {
-		return errors.New("Value to be deleted does not exist in the tree")
+		return errors.New("value to be deleted does not exist in the tree")
 	}
+
 	if n.Key > key {
-		//fmt.Println("L->",n.Key)
 		n.Left.Delete(key, n)
 	} else if n.Key < key {
 		n.Right.Delete(key, n)
 	} else {
-		if n.Left == nil && n.Right == nil { // just point to opposite node
-			n.replaceNode(p, nil)
-			return nil
-		} else if n.Left == nil {
-			n.replaceNode(p, n.Right)
-			return nil
-		} else if n.Right == nil {
-			n.replaceNode(p, n.Left)
-			return nil
+		//该节点是头结点
+		if p == nil {
+			var replacement, replParent *Node
+			if n.Left == nil && n.Right == nil {
+				return errors.New("can not delete root node without child in the tree")
+			} else if n.Left == nil {
+				replacement, replParent = n.Right.findMin(n)
+			} else if n.Right == nil {
+				replacement, replParent = n.Left.findMax(n)
+			} else {
+				replacement, replParent = n.Left.findMax(n)
+			}
+			n.Key = replacement.Key
+			return replacement.Delete(replacement.Key, replParent)
+		} else {
+			if n.Left == nil && n.Right == nil {
+				n.replaceNode(p, nil)
+				return nil
+			} else if n.Left == nil {
+				n.replaceNode(p, n.Right)
+				return nil
+			} else if n.Right == nil {
+				n.replaceNode(p, n.Left)
+				return nil
+			}
+			replacement, replParent := n.Left.findMax(n)
+			n.Key = replacement.Key
+			return replacement.Delete(replacement.Key, replParent)
 		}
-		replacement, replParent := n.Left.findMax(n)
-		n.Key = replacement.Key
-		return replacement.Delete(replacement.Key, replParent)
 	}
 	return nil
 }
 
 func (n *Node) String() string {
-	vs := []int{}
+	if n == nil {
+		return "empty node"
+	}
+	vs := make([]int, 0, 10)
 	n.Traverse(n, func(node *Node) {
 		//fmt.Println("->", node.Key)
 		vs = append(vs, node.Key)
@@ -108,7 +137,7 @@ func (n *Node) String() string {
 	for i, _ := range vs {
 		s += fmt.Sprintf("%d ", vs[i])
 	}
-	return s
+	return strings.TrimSpace(s)
 }
 
 func (n *Node) Traverse(c *Node, f func(*Node)) {

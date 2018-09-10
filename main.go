@@ -6,25 +6,32 @@ import (
 )
 
 func main() {
-	tree := &bTree.Node{Key: 6, Left: &bTree.Node{Key: 3}}
+	tree := &bTree.Node{Key: 6}
+
+	/*
+	err := tree.Delete(6, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	*/
+	fmt.Println(tree)
 	//Insert
 	tree.Insert(10)
-	tree.Insert(9)
 	tree.Insert(4)
-	tree.Insert(1)
+	tree.Insert(2)
+	tree.Insert(5)
 	fmt.Println(tree)
 	//Delete
 	tree.Delete(10, nil)
 	fmt.Println(tree)
-	//Search
-	fmt.Println(tree.Search(6))
 	tree.Delete(6, nil)
 	fmt.Println(tree)
-	fmt.Println(tree.Search(6))
+
 
 	//Max
-	fmt.Println(tree.Max())
+	//fmt.Println(tree.Max())
 	//Min
-	fmt.Println(tree.Min())
+	//fmt.Println(tree.Min())
 
 }
