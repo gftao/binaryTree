@@ -120,7 +120,7 @@ func (n *Node) delete(key int, p *Node) error {
 				return EORROOT
 			} else if n.Left == nil {
 				replacement, replParent = n.Right.findMin(n)
-			} else if n.Right == nil {
+			} else {
 				replacement, replParent = n.Left.findMax(n)
 			}
 			n.Key = replacement.Key

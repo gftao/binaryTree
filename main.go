@@ -30,16 +30,16 @@ func main() {
 		return
 	}
 	tree, err = tree.InsertNode(4)
-	tree, err = tree.InsertNode(2)
-	tree, err = tree.InsertNode(5)
+	tree, err = tree.InsertNode(12)
+	//tree, err = tree.InsertNode(5)
 	fmt.Println(tree)
 	//delete
-	tree.DeleteNode(4)
+	tree.DeleteNode(10)
 	fmt.Println(tree)
 
-	//Max
-	fmt.Println(tree.Max())
-	//Min
-	fmt.Println(tree.Min())
+	////Max
+	//fmt.Println(tree.Max())
+	////Min
+	//fmt.Println(tree.Min())
 
 }
