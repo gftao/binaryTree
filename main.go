@@ -9,29 +9,37 @@ func main() {
 	tree := &bTree.Node{Key: 6}
 
 	/*
-	err := tree.Delete(6, nil)
+	err := tree.delete(6, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	*/
-	fmt.Println(tree)
-	//Insert
-	tree.Insert(10)
-	tree.Insert(4)
-	tree.Insert(2)
-	tree.Insert(5)
-	fmt.Println(tree)
-	//Delete
-	tree.Delete(10, nil)
-	fmt.Println(tree)
-	tree.Delete(6, nil)
-	fmt.Println(tree)
 
+	fmt.Println(tree)
+	tree, err := tree.DeleteNode(6)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(tree)
+	//insert
+	tree, err = tree.InsertNode(10)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	tree, err = tree.InsertNode(4)
+	tree, err = tree.InsertNode(2)
+	tree, err = tree.InsertNode(5)
+	fmt.Println(tree)
+	//delete
+	tree.DeleteNode(4)
+	fmt.Println(tree)
 
 	//Max
-	//fmt.Println(tree.Max())
+	fmt.Println(tree.Max())
 	//Min
-	//fmt.Println(tree.Min())
+	fmt.Println(tree.Min())
 
 }

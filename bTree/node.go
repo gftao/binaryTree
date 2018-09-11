@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var EORROOT error = errors.New("can not delete root node without child in the tree")
+
 type Node struct {
 	Key   int
 	Left  *Node
@@ -23,18 +25,29 @@ func (n *Node) Search(key int) bool {
 	}
 	return true
 }
-func (n *Node) Insert(key int) {
+func (n *Node) InsertNode(key int) (*Node, error) {
+	if n == nil {
+		return &Node{Key: key}, nil
+	} else {
+		n.insert(key)
+	}
+	return n, nil
+}
+func (n *Node) insert(key int) {
+	if n == nil {
+		return
+	}
 	if n.Key > key {
 		if n.Left == nil {
 			n.Left = &Node{Key: key}
 		} else {
-			n.Left.Insert(key)
+			n.Left.insert(key)
 		}
 	} else if n.Key < key {
 		if n.Right == nil {
 			n.Right = &Node{Key: key}
 		} else {
-			n.Right.Insert(key)
+			n.Right.insert(key)
 		}
 	}
 }
@@ -81,30 +94,37 @@ func (n *Node) replaceNode(parent, replacement *Node) {
 	}
 }
 
-func (n *Node) Delete(key int, p *Node) error {
+func (n *Node) DeleteNode(key int) (*Node, error) {
+	err := n.delete(key, nil)
+	if err == EORROOT {
+		n = nil
+		return nil, nil
+	}
+	return n, err
+}
+
+func (n *Node) delete(key int, p *Node) error {
 	if n == nil {
 		return errors.New("value to be deleted does not exist in the tree")
 	}
 
 	if n.Key > key {
-		n.Left.Delete(key, n)
+		n.Left.delete(key, n)
 	} else if n.Key < key {
-		n.Right.Delete(key, n)
+		n.Right.delete(key, n)
 	} else {
 		//该节点是头结点
 		if p == nil {
 			var replacement, replParent *Node
 			if n.Left == nil && n.Right == nil {
-				return errors.New("can not delete root node without child in the tree")
+				return EORROOT
 			} else if n.Left == nil {
 				replacement, replParent = n.Right.findMin(n)
 			} else if n.Right == nil {
 				replacement, replParent = n.Left.findMax(n)
-			} else {
-				replacement, replParent = n.Left.findMax(n)
 			}
 			n.Key = replacement.Key
-			return replacement.Delete(replacement.Key, replParent)
+			return replacement.delete(replacement.Key, replParent)
 		} else {
 			if n.Left == nil && n.Right == nil {
 				n.replaceNode(p, nil)
@@ -118,7 +138,7 @@ func (n *Node) Delete(key int, p *Node) error {
 			}
 			replacement, replParent := n.Left.findMax(n)
 			n.Key = replacement.Key
-			return replacement.Delete(replacement.Key, replParent)
+			return replacement.delete(replacement.Key, replParent)
 		}
 	}
 	return nil
